@@ -6,6 +6,8 @@
 #include "Configuration/Config.h"
 #include "Chat.h"
 
+#define HIDDEN_ITEM_ID 1 // used for hidden transmog - do not use a valid equipment ID
+
 // Enum for item qualities
 enum ItemQuality {
     GREY = 0,
@@ -45,25 +47,25 @@ public:
             RollPossibleEnchant(player, item);
     }
 
-    std::string GetItemLink(uint32 entry, WorldSession* session) const
-    {
-        if (entry == HIDDEN_ITEM_ID) {
-            std::ostringstream oss;
-            oss << "(Hidden)";
-            return oss.str();
-        }
-        const ItemTemplate* temp = sObjectMgr->GetItemTemplate(entry);
-        int loc_idx = session->GetSessionDbLocaleIndex();
-        std::string name = temp->Name1;
-        if (ItemLocale const* il = sObjectMgr->GetItemLocale(entry))
-            ObjectMgr::GetLocaleString(il->Name, loc_idx, name);
+	std::string GetItemLink(uint32 entry, WorldSession* session) const
+	{
+		if (entry == HIDDEN_ITEM_ID) {
+			std::ostringstream oss;
+			oss << "(Hidden)";
+			return oss.str();
+		}
+		const ItemTemplate* temp = sObjectMgr->GetItemTemplate(entry);
+		int loc_idx = session->GetSessionDbLocaleIndex();
+		std::string name = temp->Name1;
+		if (ItemLocale const* il = sObjectMgr->GetItemLocale(entry))
+			ObjectMgr::GetLocaleString(il->Name, loc_idx, name);
 
-        std::ostringstream oss;
-        oss << "|c" << std::hex << ItemQualityColors[temp->Quality] << std::dec <<
-            "|Hitem:" << entry << ":0:0:0:0:0:0:0:0:0|h[" << name << "]|h|r";
+		std::ostringstream oss;
+		oss << "|c" << std::hex << ItemQualityColors[temp->Quality] << std::dec <<
+			"|Hitem:" << entry << ":0:0:0:0:0:0:0:0:0|h[" << name << "]|h|r";
 
-        return oss.str();
-    }
+		return oss.str();
+	}
 
     void RollPossibleEnchant(Player* player, Item* item) {
         // Check global enable option
@@ -105,11 +107,11 @@ public:
         }
         ChatHandler chathandle = ChatHandler(player->GetSession());
         if (slotRand[2] != -1)
-            chathandle.PSendSysMessage("%s 获得|cffFF0000 3 |r条随机附魔!", GetItemLink(item->GetEntry(), player->GetSession()));
-        else if (slotRand[1] != -1)
-            chathandle.PSendSysMessage("%s 获得|cffFF0000 2 |r条随机附魔!", GetItemLink(item->GetEntry(), player->GetSession()));
-        else if (slotRand[0] != -1)
-            chathandle.PSendSysMessage("%s 获得|cffFF0000 1 |r条随机附魔!", GetItemLink(item->GetEntry(), player->GetSession()));
+			chathandle.PSendSysMessage("%s 获得|cffFF0000 3 |r条随机附魔!", GetItemLink(item->GetEntry(), player->GetSession()));
+		else if (slotRand[1] != -1)
+			chathandle.PSendSysMessage("%s 获得|cffFF0000 2 |r条随机附魔!", GetItemLink(item->GetEntry(), player->GetSession()));
+		else if (slotRand[0] != -1)
+			chathandle.PSendSysMessage("%s 获得|cffFF0000 1 |r条随机附魔!", GetItemLink(item->GetEntry(), player->GetSession()));
     }
 
     int getRandEnchantment(Item* item) {
